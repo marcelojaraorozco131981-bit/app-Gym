@@ -1,0 +1,84 @@
+<div class="max-w-4xl mx-auto p-4 md:p-6">
+  <h2 class="text-3xl font-bold text-lime-400 mb-6">Rutina Semanal</h2>
+
+  <!-- Day Selector -->
+  <div class="flex space-x-2 overflow-x-auto pb-4 mb-6 -mx-4 px-4">
+    @for (day of daysOfWeek; track day) {
+    <button (click)="selectDay(day)" 
+      [class]="'px-4 py-2 rounded-full font-semibold transition-colors whitespace-nowrap ' + (selectedDay() === day ? 'bg-lime-400 text-gray-900' : 'bg-gray-700 hover:bg-gray-600 text-gray-200')">
+      {{ day }}
+    </button>
+    }
+  </div>
+
+  <!-- Exercises for selected day -->
+  <div class="space-y-4">
+    @if(loading()) {
+      <p class="text-center text-gray-400">Cargando rutina...</p>
+    } @else {
+      @if (exercisesForSelectedDay().length > 0) {
+        @for (exercise of exercisesForSelectedDay(); track exercise.id) {
+          <div class="bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex-grow">
+              <h3 class="text-xl font-semibold text-white">{{ exercise.name }}</h3>
+              <p class="text-gray-400">{{ exercise.sets }} series x {{ exercise.reps }} reps @if (exercise.weight) { @ {{ exercise.weight }}kg }</p>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button (click)="startWorkout(exercise)" class="w-1/2 sm:w-auto flex-grow px-4 py-2 bg-lime-500 text-gray-900 font-semibold rounded-md hover:bg-lime-400 transition-colors">Iniciar</button>
+              <button (click)="openEditModal(exercise)" class="p-2 bg-gray-700 rounded-md hover:bg-gray-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg></button>
+              <button (click)="deleteExercise(exercise.id)" class="p-2 bg-red-800 rounded-md hover:bg-red-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="text-center py-10 px-6 bg-gray-800 rounded-lg">
+          <h3 class="text-xl font-semibold text-white">¡Día de Descanso!</h3>
+          <p class="text-gray-400 mt-2">No hay ejercicios planeados para hoy. Disfruta tu recuperación.</p>
+        </div>
+      }
+    }
+  </div>
+  
+  <button (click)="openAddModal()" class="mt-6 w-full py-3 bg-lime-400 text-gray-900 font-bold rounded-lg hover:bg-lime-300 transition-colors">
+    Añadir Ejercicio al {{ selectedDay() }}
+  </button>
+</div>
+
+<!-- Add/Edit Exercise Modal -->
+@if (isModalOpen()) {
+<div class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-40 p-4">
+  <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md" #modal>
+    <h3 class="text-2xl font-bold mb-4 text-lime-400">{{ exerciseToEdit() ? 'Editar' : 'Añadir' }} Ejercicio</h3>
+    <form #exerciseForm="ngForm" (ngSubmit)="saveExercise(exerciseForm.value)">
+      <div class="space-y-4">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-300">Nombre del Ejercicio</label>
+          <input type="text" name="name" id="name" required [ngModel]="exerciseToEdit()?.name" class="mt-1 w-full bg-gray-700 border-gray-600 rounded-md px-3 py-2 focus:ring-lime-400 focus:border-lime-400 text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="sets" class="block text-sm font-medium text-gray-300">Series</label>
+            <input type="number" name="sets" id="sets" required [ngModel]="exerciseToEdit()?.sets" class="mt-1 w-full bg-gray-700 border-gray-600 rounded-md px-3 py-2 focus:ring-lime-400 focus:border-lime-400 text-white">
+          </div>
+          <div>
+            <label for="reps" class="block text-sm font-medium text-gray-300">Repeticiones</label>
+            <input type="text" name="reps" id="reps" required [ngModel]="exerciseToEdit()?.reps" class="mt-1 w-full bg-gray-700 border-gray-600 rounded-md px-3 py-2 focus:ring-lime-400 focus:border-lime-400 text-white">
+          </div>
+        </div>
+        <div>
+          <label for="weight" class="block text-sm font-medium text-gray-300">Peso (kg, opcional)</label>
+          <input type="number" name="weight" id="weight" [ngModel]="exerciseToEdit()?.weight" class="mt-1 w-full bg-gray-700 border-gray-600 rounded-md px-3 py-2 focus:ring-lime-400 focus:border-lime-400 text-white">
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-600 text-white font-semibold rounded-md hover:bg-gray-500 transition-colors">Cancelar</button>
+        <button type="submit" [disabled]="!exerciseForm.valid" class="px-4 py-2 bg-lime-500 text-gray-900 font-semibold rounded-md hover:bg-lime-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+@if (activeWorkout()) {
+  <app-workout-timer [exercise]="activeWorkout()!" (workoutFinished)="finishWorkout()"></app-workout-timer>
+}

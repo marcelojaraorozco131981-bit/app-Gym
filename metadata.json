@@ -1,0 +1,7 @@
+{
+  "name": "Planificador de Gimnasio",
+  "description": "Una aplicación completa para entusiastas del gimnasio para gestionar sus rutinas de entrenamiento semanales, cronometrar ejercicios y ver horarios de clases. Planifica tus entrenamientos, sigue tu progreso y mantente al tanto de tus objetivos de fitness.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

@@ -1,0 +1,47 @@
+
+@if (!isLoggedIn()) {
+  <app-login (loginSuccess)="onLoginSuccess()"></app-login>
+} @else {
+  <div class="flex flex-col h-screen">
+    <header class="bg-gray-800 shadow-md flex justify-between items-center p-4">
+      <h1 class="text-2xl font-bold text-lime-400">GymFlow</h1>
+      <button (click)="signOut()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-md hover:bg-gray-600 hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+        </svg>
+        <span>Cerrar Sesión</span>
+      </button>
+    </header>
+    
+    <main class="flex-grow overflow-y-auto">
+      @switch (mainView()) {
+        @case ('routine') {
+          <app-routine-planner></app-routine-planner>
+        }
+        @case ('classes') {
+          <app-class-schedule></app-class-schedule>
+        }
+        @case ('profile') {
+          <app-profile></app-profile>
+        }
+      }
+    </main>
+    
+    <nav class="bg-gray-800 border-t border-gray-700">
+      <div class="max-w-4xl mx-auto flex justify-around p-2">
+        <button (click)="navigateTo('routine')" class="w-1/3 flex flex-col items-center justify-center p-2 rounded-lg transition-colors" [class]="mainView() === 'routine' ? 'text-lime-400' : 'text-gray-400 hover:text-lime-400'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+          <span class="text-xs font-medium mt-1">Rutina</span>
+        </button>
+        <button (click)="navigateTo('classes')" class="w-1/3 flex flex-col items-center justify-center p-2 rounded-lg transition-colors" [class]="mainView() === 'classes' ? 'text-lime-400' : 'text-gray-400 hover:text-lime-400'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          <span class="text-xs font-medium mt-1">Clases</span>
+        </button>
+        <button (click)="navigateTo('profile')" class="w-1/3 flex flex-col items-center justify-center p-2 rounded-lg transition-colors" [class]="mainView() === 'profile' ? 'text-lime-400' : 'text-gray-400 hover:text-lime-400'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          <span class="text-xs font-medium mt-1">Perfil</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+}

@@ -1,0 +1,41 @@
+<div class="p-4 md:p-6 max-w-4xl mx-auto">
+  <h2 class="text-3xl font-bold text-lime-400 mb-6">Horario de Clases</h2>
+  @if(loading()) {
+    <p class="text-center text-gray-400">Cargando clases...</p>
+  } @else {
+    <div class="space-y-4">
+      @for (gymClass of displayClasses(); track gymClass.id) {
+        <div class="bg-gray-800 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:bg-gray-700/50">
+          <div class="flex-grow">
+            <h3 class="text-xl font-semibold text-white">{{ gymClass.name }}</h3>
+            <p class="text-gray-400">con {{ gymClass.instructor }}</p>
+            <div class="flex items-center gap-4 mt-2 text-sm text-gray-300">
+              <span>{{ gymClass.time }}</span>
+              <span>-</span>
+              <span>{{ gymClass.duration }} min</span>
+            </div>
+          </div>
+          <div class="flex flex-col items-start sm:items-end w-full sm:w-auto">
+            <p class="text-sm font-medium" [class.text-lime-400]="gymClass.spots_available > 0" [class.text-red-500]="gymClass.spots_available === 0">
+              {{ gymClass.spots_available }} lugares disponibles
+            </p>
+            <button (click)="toggleBooking(gymClass)"
+              [disabled]="gymClass.spots_available === 0 && !gymClass.booked"
+              class="mt-2 px-4 py-2 text-sm font-semibold rounded-md transition-colors w-full sm:w-auto"
+              [class.bg-lime-500]="!gymClass.booked"
+              [class.hover:bg-lime-400]="!gymClass.booked"
+              [class.text-gray-900]="!gymClass.booked"
+              [class.bg-gray-600]="gymClass.booked"
+              [class.hover:bg-gray-500]="gymClass.booked"
+              [class.text-white]="gymClass.booked"
+              [class.opacity-50]="gymClass.spots_available === 0 && !gymClass.booked"
+              [class.cursor-not-allowed]="gymClass.spots_available === 0 && !gymClass.booked"
+              >
+              {{ gymClass.booked ? 'Reservado' : 'Reservar Clase' }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
